@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>СꙤОѴꙖР СТꙖРОДꙖѴНІХЪ БꙊКѴ</title>
+<style>
+:root{color-scheme:dark;--bg:#10131b;--panel:#1b2030;--line:#343c52;--gold:#d8bd78;--muted:#aeb6c8}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#283047 0,#10131b 58%);color:#f3f0e8;font:16px/1.55 Georgia,"Times New Roman",serif;padding:32px 16px}
+main{max-width:900px;margin:auto}
+header{text-align:center;margin:18px 0 30px}
+h1{font-size:clamp(27px,5vw,44px);letter-spacing:1px;color:var(--gold);margin:0 0 8px;text-shadow:0 2px 18px #000}
+header p{color:var(--muted);margin:0}
+.panel{background:rgba(27,32,48,.94);border:1px solid var(--line);border-radius:16px;padding:22px;margin:16px 0;box-shadow:0 14px 40px #0005}
+label{display:block;color:var(--gold);font-weight:bold;margin-bottom:9px}
+textarea{width:100%;min-height:170px;resize:vertical;background:#101522;color:#f5f2eb;border:1px solid #414b63;border-radius:10px;padding:14px;font:17px/1.6 Georgia,serif;outline:none}
+textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px #d8bd7822}
+select{width:100%;max-width:360px;background:#101522;color:#f5f2eb;border:1px solid #414b63;border-radius:9px;padding:11px;font:16px Georgia,serif}
+.output{background:#121a20}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+button{border:1px solid var(--gold);background:#342f25;color:#f7e8bd;border-radius:9px;padding:10px 16px;font:bold 15px Georgia,serif;cursor:pointer}
+button:hover{background:#4a412e}
+button.secondary{background:#20283a;border-color:#56617b;color:#e4e8f1}
+.toggle{display:flex;gap:9px;align-items:center;color:var(--muted);font-size:14px}
+.toggle input{accent-color:var(--gold);width:17px;height:17px}
+.note{color:var(--muted);font-size:14px;margin:12px 0 0}
+.mapping{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+.mapping span{background:#121827;border:1px solid #30394e;border-radius:8px;padding:7px 10px;text-align:center}
+.hidden{display:none}
+footer{text-align:center;color:#8791a8;font-size:13px;margin:26px 0}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>СꙤОѴꙖР СТꙖРОДꙖѴНІХЪ БꙊКѴ</h1>
+<p id="subtitle">Перетворювач повідомлень у заданій старослов’янській стилізації</p>
+</header>
+
+<section class="panel" id="languagePanel">
+<label for="language" id="languageLabel">Оберіть мову / Выберите язык / Абярыце мову</label>
+<select id="language">
+<option value="uk">Українська</option>
+<option value="ru">Русский</option>
+<option value="be">Беларуськая</option>
+</select>
+<div class="controls"><button id="start">Продовжити</button></div>
+<p class="note" id="languageNote">Мову інтерфейсу можна змінити пізніше.</p>
+</section>
+
+<div id="app" class="hidden">
+<section class="panel">
+<label for="languageSwitch" id="languageSwitchLabel">Мова інтерфейсу / Язык интерфейса / Мова інтэрфейсу</label>
+<select id="languageSwitch">
+<option value="uk">Українська</option>
+<option value="ru">Русский</option>
+<option value="be">Беларуськая</option>
+</select>
+</section>
+<section class="panel">
+<label for="source" id="inputLabel">Введіть текст</label>
+<textarea id="source" placeholder="Напишіть тут текст..."></textarea>
+<div class="controls">
+<button id="convert">Перетворити текст</button>
+<button class="secondary" id="clear">Очистити</button>
+<label class="toggle"><input type="checkbox" id="rareU"><span id="rareLabel">Рідкісне перетворення у → ꙋ</span></label>
+</div>
+<p class="note" id="enterNote">Натисніть Enter, щоб перетворити текст. Для нового рядка використовуйте Shift + Enter.</p>
+</section>
+
+<section class="panel">
+<label for="result" id="resultLabel">Результат</label>
+<textarea id="result" class="output" readonly placeholder="Тут з’явиться перетворений текст..."></textarea>
+<div class="controls">
+<button id="copy">Копіювати результат</button>
+<span id="status" class="note" aria-live="polite"></span>
+</div>
+</section>
+
+<section class="panel">
+<label id="mappingLabel">Таблиця перетворень</label>
+<div class="mapping">
+<span>й → ѷ</span><span>я → ѧ</span><span>е → ё</span><span>є → ѥ</span>
+<span>п → ѱ</span><span>з → ꙃ</span><span>ь → ъ</span><span>ш → ѡ</span>
+<span>в → ѵ</span><span>а → ꙗ</span><span>м → ꙧ</span><span>і → і</span>
+<span>ї → ї</span><span>л → ꙥ</span><span id="rareMapping">у → ꙋ (рідко)</span>
+</div>
+<p class="note" id="mappingNote">Слова «привіт» і «народ» мають окремі форми: «ѱриѵітъ» та «народъ». Великі літери також перетворюються. Інші символи залишаються без змін.</p>
+</section>
+</div>
+<footer>СꙤОѴꙖР ДРЁѴНІ́ХЪ БꙊКѴ</footer>
+</main>
+<script>
+const translations = {
+  uk: {
+    subtitle:"Перетворювач повідомлень у заданій старослов’янській стилізації",
+    languageLabel:"Оберіть мову / Выберите язык / Абярыце мову", languageSwitchLabel:"Мова інтерфейсу", start:"Продовжити", languageNote:"Мову інтерфейсу можна змінити пізніше.",
+    inputLabel:"Введіть текст", placeholder:"Напишіть тут текст...", convert:"Перетворити текст", clear:"Очистити",
+    rareLabel:"Рідкісне перетворення у → ꙋ", enterNote:"Натисніть Enter, щоб перетворити текст. Для нового рядка використовуйте Shift + Enter.",
+    resultLabel:"Результат", resultPlaceholder:"Тут з’явиться перетворений текст...", copy:"Копіювати результат",
+    mappingLabel:"Таблиця перетворень", rareMapping:"у → ꙋ (рідко)",
+    mappingNote:"Слова «привіт» і «народ» мають окремі форми: «ѱриѵітъ» та «народъ». Великі літери також перетворюються. Інші символи залишаються без змін.",
+    done:"Текст перетворено.", copied:"Результат скопійовано.", empty:"Спочатку введіть текст.",
+    copyFallback:"Виділіть результат і скопіюйте його вручну."
+  },
+  ru: {
+    subtitle:"Преобразователь сообщений в заданной старославянской стилизации",
+    languageLabel:"Оберіть мову / Выберите язык / Абярыце мову", languageSwitchLabel:"Язык интерфейса", start:"Продолжить", languageNote:"Язык интерфейса можно изменить позже.",
+    inputLabel:"Введите текст", placeholder:"Напишите здесь текст...", convert:"Преобразовать текст", clear:"Очистить",
+    rareLabel:"Редкое преобразование у → ꙋ", enterNote:"Нажмите Enter, чтобы преобразовать текст. Для новой строки используйте Shift + Enter.",
+    resultLabel:"Результат", resultPlaceholder:"Здесь появится преобразованный текст...", copy:"Копировать результат",
+    mappingLabel:"Таблица преобразований", rareMapping:"у → ꙋ (редко)",
+    mappingNote:"Слова «привет» и «народ» имеют отдельные формы: «ѱриѵітъ» и «народъ». Заглавные буквы также преобразуются. Остальные символы остаются без изменений.",
+    done:"Текст преобразован.", copied:"Результат скопирован.", empty:"Сначала введите текст.",
+    copyFallback:"Выделите результат и скопируйте его вручную."
+  },
+  be: {
+    subtitle:"Пераўтваральнік паведамленняў у зададзенай стараславянскай стылізацыі",
+    languageLabel:"Оберіть мову / Выберите язык / Абярыце мову", languageSwitchLabel:"Мова інтэрфейсу", start:"Працягнуць", languageNote:"Мову інтэрфейсу можна змяніць пазней.",
+    inputLabel:"Увядзіце тэкст", placeholder:"Напішыце тут тэкст...", convert:"Пераўтварыць тэкст", clear:"Ачысціць",
+    rareLabel:"Рэдкае пераўтварэнне у → ꙋ", enterNote:"Націсніце Enter, каб пераўтварыць тэкст. Для новага радка выкарыстоўвайце Shift + Enter.",
+    resultLabel:"Вынік", resultPlaceholder:"Тут з’явіцца пераўтвораны тэкст...", copy:"Скапіяваць вынік",
+    mappingLabel:"Табліца пераўтварэнняў", rareMapping:"у → ꙋ (рэдка)",
+    mappingNote:"Словы «прывітанне» і «людзі» маюць асобныя формы толькі для адпаведных прыкладаў: «Ѱрыѵітꙗнні» і «ꙥюдꙃі». Вялікія літары таксама пераўтвараюцца. Іншыя сімвалы застаюцца без змен.",
+    done:"Тэкст пераўтвораны.", copied:"Вынік скапіяваны.", empty:"Спачатку ўвядзіце тэкст.",
+    copyFallback:"Вылучыце вынік і скапіруйце яго ўручную."
+  }
+};
+const map = {"й":"ѷ","я":"ѧ","е":"ё","є":"ѥ","п":"ѱ","з":"ꙃ","ь":"ъ","ш":"ѡ","в":"ѵ","а":"ꙗ","м":"ꙧ","л":"ꙥ"};
+let currentLang = "uk";
+const $ = id => document.getElementById(id);
+function applyLanguage(lang) {
+  currentLang = lang;
+  const t = translations[lang];
+  const switchLabel = $("languageSwitchLabel");
+  if (switchLabel) switchLabel.textContent = t.languageSwitchLabel;
+  const switchSelect = $("languageSwitch");
+  if (switchSelect) switchSelect.value = lang;
+  $("subtitle").textContent=t.subtitle; $("languageLabel").textContent=t.languageLabel;
+  $("start").textContent=t.start; $("languageNote").textContent=t.languageNote;
+  $("inputLabel").textContent=t.inputLabel; $("source").placeholder=t.placeholder;
+  $("convert").textContent=t.convert; $("clear").textContent=t.clear;
+  $("rareLabel").textContent=t.rareLabel; $("enterNote").textContent=t.enterNote;
+  $("resultLabel").textContent=t.resultLabel; $("result").placeholder=t.resultPlaceholder;
+  $("copy").textContent=t.copy; $("mappingLabel").textContent=t.mappingLabel; $("rareMapping").textContent=t.rareMapping;
+  $("mappingNote").textContent=t.mappingNote;
+}
+function convertText(text, rareU) {
+  // Whole-word exceptions are applied before the character-by-character alphabet conversion.
+  const words = {"привіт":"ѱриѵітъ","народ":"народъ"};
+  const tokens = text.match(/[\p{L}]+|[^\p{L}]+/gu) || [];
+  return tokens.map(token => {
+    const lower = token.toLocaleLowerCase();
+    if (words[lower]) {
+      const replacement = words[lower];
+      return token === lower ? replacement : replacement.charAt(0).toLocaleUpperCase() + replacement.slice(1);
+    }
+    let out = "";
+    for (const char of token) {
+      const lowerChar = char.toLocaleLowerCase();
+      if (lowerChar === "у" && rareU) out += char === lowerChar ? "ꙋ" : "Ꙋ";
+      else if (map[lowerChar]) {
+        const replacement = map[lowerChar];
+        out += char === lowerChar ? replacement : replacement.toLocaleUpperCase();
+      } else out += char;
+    }
+    return out;
+  }).join("");
+}
+function convert() {
+  $("result").value = convertText($("source").value, $("rareU").checked);
+  $("status").textContent = translations[currentLang].done;
+}
+$("start").addEventListener("click", () => {
+  applyLanguage($("language").value);
+  $("languagePanel").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("source").focus();
+});
+$("language").addEventListener("change", e => applyLanguage(e.target.value));
+$("languageSwitch").addEventListener("change", e => applyLanguage(e.target.value));
+$("convert").addEventListener("click", convert);
+$("source").addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); convert(); }
+});
+$("source").addEventListener("input", () => {
+  if ($("source").value.length) $("result").value = convertText($("source").value, $("rareU").checked);
+});
+$("rareU").addEventListener("change", () => {
+  $("result").value = convertText($("source").value, $("rareU").checked);
+});
+$("clear").addEventListener("click", () => {
+  $("source").value=""; $("result").value=""; $("status").textContent=""; $("source").focus();
+});
+$("copy").addEventListener("click", async () => {
+  const t = translations[currentLang], status = $("status");
+  if (!$("result").value) { status.textContent=t.empty; return; }
+  try { await navigator.clipboard.writeText($("result").value); status.textContent=t.copied; }
+  catch { $("result").select(); status.textContent=t.copyFallback; }
+});
+applyLanguage("uk");
+</script>
+</body>
+</html>
